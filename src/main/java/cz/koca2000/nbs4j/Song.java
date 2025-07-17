@@ -609,9 +609,6 @@ public final class Song {
          */
         @NotNull
         public Builder length(long length){
-            if (lastTick >= length) {
-                throw new IllegalArgumentException("Specified song length would not contain all notes or tempo changes.");
-            }
             songLength = length;
 
             return this;
