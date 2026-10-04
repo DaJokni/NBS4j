@@ -198,6 +198,32 @@ public interface Note {
             return this;
         }
 
+        /**
+         * Sets the raw volume of this note, bypassing normal bounds checking.
+         * Useful for functional instruments like Sound Stopper that store data in the volume byte.
+         *
+         * @param volume raw volume byte
+         * @return this instance of {@link Builder}
+         */
+        @NotNull
+        public Builder rawVolume(byte volume) {
+            this.volume = volume;
+            return this;
+        }
+
+        /**
+         * Sets the raw panning of this note, bypassing normal bounds checking.
+         * Useful for functional instruments like Sound Stopper that store data in the panning byte.
+         *
+         * @param panning raw panning value
+         * @return this instance of {@link Builder}
+         */
+        @NotNull
+        public Builder rawPanning(int panning) {
+            this.panning = panning;
+            return this;
+        }
+
         private int normalizeRangeOrThrow(int value, int min, int max, String parameterDisplayName) {
             if (isStrict && (value < min || value > max)) {
                 throw new IllegalArgumentException(parameterDisplayName + " must be in range [" + min + "; " + max + "] inclusive.");

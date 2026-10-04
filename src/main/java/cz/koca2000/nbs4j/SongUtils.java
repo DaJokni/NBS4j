@@ -17,4 +17,40 @@ class SongUtils {
         }
         return -1;
     }
+
+    public static int findSoundStopperInstrumentIndex(@NotNull List<CustomInstrument> customInstruments) {
+        for (int i = 0; i < customInstruments.size(); i++) {
+            if (CustomInstrument.SOUND_STOPPER_INSTRUMENT_NAME.equals(customInstruments.get(i).getName())) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public static int getSoundStopperStartLayer(@NotNull Note note) {
+        return note.getPitch();
+    }
+
+    public static int getSoundStopperEndLayer(@NotNull Note note) {
+        int panOpenNbs = (100 - note.getPanning()) & 0xFF;
+        int velOpenNbs = note.getVolume() & 0xFF;
+
+        int pan = (panOpenNbs + 156) % 256;
+        int vel = (velOpenNbs + 156) % 256;
+        return pan + vel * 256;
+    }
+
+    public static Note buildSoundStopperNote(int instrumentId, boolean isCustomInstrument, int startLayer, int endLayer) {
+        int vel = endLayer / 256;
+        int pan = endLayer - (vel * 256);
+        int openNbsVel = (vel + 100) % 256;
+        int openNbsPan = (pan + 100) % 256;
+
+        return Note.builder()
+                .instrument(instrumentId, isCustomInstrument)
+                .rawVolume((byte) openNbsVel)
+                .rawPanning(100 - openNbsPan)
+                .pitch(startLayer)
+                .build();
+    }
 }

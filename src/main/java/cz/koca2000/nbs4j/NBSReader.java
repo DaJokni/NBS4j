@@ -88,14 +88,15 @@ class NBSReader {
             data.version = stream.readByte();
             data.firstCustomInstrumentIndex = stream.readByte();
 
-            if (data.version >= 3) // Until nbs 3 there wasn't length specified in the file
-                song.length(readShort(stream));
+            if (data.version >= 3)
+                data.parsedLength = readShort(stream) & 0xFFFF; // <--- Change to this
         }
         else
-            song.length(length);
+            data.parsedLength = length & 0xFFFF; // <--- Change to this
 
         return data;
     }
+
 
     @NotNull
     private static List<Layer.Builder> initializeLayerBuilders(@NotNull DataInputStream stream) throws IOException {
@@ -133,18 +134,18 @@ class NBSReader {
     }
 
     private static void readNotes(@NotNull HeaderData header, @NotNull List<Layer.Builder> layers, @NotNull DataInputStream stream) throws IOException {
-        short tick = -1;
+        int tick = -1; // <--- Changed to int
         while (true) {
-            short jumpTicks = readShort(stream); // jumps till next tick
+            short jumpTicks = readShort(stream); // (Keep jumpTicks as short)
 
             if (jumpTicks == 0) {
                 break;
             }
-            tick += jumpTicks;
+            tick += jumpTicks; // Now this will safely count up to 2 billion!
 
             short layer = -1;
             while (true) {
-                short jumpLayers = readShort(stream); // jumps till next layer
+                short jumpLayers = readShort(stream);
                 if (jumpLayers == 0) {
                     break;
                 }
@@ -155,7 +156,8 @@ class NBSReader {
         }
     }
 
-    private static void readNote(@NotNull HeaderData header, short tick, short layer, @NotNull List<Layer.Builder> layers, @NotNull DataInputStream stream) throws IOException {
+
+    private static void readNote(@NotNull HeaderData header, int tick, short layer, @NotNull List<Layer.Builder> layers, @NotNull DataInputStream stream) throws IOException {
         byte instrument = stream.readByte();
 
         int instrumentId;
@@ -190,8 +192,8 @@ class NBSReader {
                 .note(tick, Note.builder()
                         .instrument(instrumentId, isCustomInstrument)
                         .key(key)
-                        .volume(volume)
-                        .panning(panning)
+                        .rawVolume(volume)
+                        .rawPanning(panning)
                         .pitch(pitch)
                         .build()
                 );
@@ -282,6 +284,7 @@ class NBSReader {
     private static class HeaderData{
         private int version = 0;
         private int firstCustomInstrumentIndex = 10; //Backward compatibility - most of the songs with old structure are from 1.12
+        public int parsedLength = 0; // <--- ADD THIS LINE
     }
 
 }

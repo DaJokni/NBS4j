@@ -7,6 +7,7 @@ import java.util.Objects;
 public class CustomInstrument {
 
     public static final String TEMPO_CHANGER_INSTRUMENT_NAME = "Tempo Changer";
+    public static final String SOUND_STOPPER_INSTRUMENT_NAME = "Sound Stopper";
 
     private final String name;
     private final String fileName;
