@@ -154,7 +154,7 @@ class NBSWriter {
 
         if (nbsVersion >= 4){
             stream.writeByte(note.getVolume());
-            stream.writeByte(100 - note.getPanning()); // 0 is right in nbs format
+            stream.writeByte(note.getPanning() + 100); // 0 is left in nbs format
             writeShort(stream, (short) note.getPitch());
         }
     }
@@ -185,7 +185,7 @@ class NBSWriter {
         stream.writeByte(layer.getVolume());
 
         if (nbsVersion >= 2)
-            stream.writeByte(100 - layer.getPanning()); // 0 is right in nbs format
+            stream.writeByte(layer.getPanning() + 100); // 0 is left in nbs format
     }
 
     private static void writeCustomInstruments(@NotNull DataOutputStream stream, @NotNull Song song, boolean isTempoChangerNeeded) throws IOException {

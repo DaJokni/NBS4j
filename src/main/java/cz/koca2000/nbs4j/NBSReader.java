@@ -176,7 +176,7 @@ class NBSReader {
         short pitch;
         if (header.version >= 4) {
             volume = stream.readByte();
-            panning = 100 - stream.readUnsignedByte(); // 0 is 2 blocks right in nbs format, we want -100 to be left and 100 to be right
+            panning = stream.readUnsignedByte() - 100; // 0 is 2 blocks left in nbs format, we want -100 to be left and 100 to be right
             pitch = readShort(stream);
         } else {
             volume = 100;
@@ -209,7 +209,7 @@ class NBSReader {
 
             layer.volume(stream.readByte());
             if (header.version >= 2) {
-                layer.panning(100 - stream.readUnsignedByte()); // 0 is 2 blocks right in nbs format, we want -100 to be left and 100 to be right
+                layer.panning(stream.readUnsignedByte() - 100); // 0 is 2 blocks left in nbs format, we want -100 to be left and 100 to be right
             }
         }
     }

@@ -32,7 +32,7 @@ class SongUtils {
     }
 
     public static int getSoundStopperEndLayer(@NotNull Note note) {
-        int panOpenNbs = (100 - note.getPanning()) & 0xFF;
+        int panOpenNbs = (note.getPanning() + 100) & 0xFF;
         int velOpenNbs = note.getVolume() & 0xFF;
 
         int pan = (panOpenNbs + 156) % 256;
@@ -49,7 +49,7 @@ class SongUtils {
         return Note.builder()
                 .instrument(instrumentId, isCustomInstrument)
                 .rawVolume((byte) openNbsVel)
-                .rawPanning(100 - openNbsPan)
+                .rawPanning(openNbsPan - 100)
                 .pitch(startLayer)
                 .build();
     }
